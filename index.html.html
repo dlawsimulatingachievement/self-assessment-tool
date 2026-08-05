@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epistemic Justification and Dream Achievement: A Self-Assessment Tool</title>
+<style>
+  :root {
+    --bg: #FAF8F4;
+    --panel: #FFFFFF;
+    --ink: #211F1C;
+    --ink-soft: #5B5750;
+    --line: #E2DED4;
+    --accent: #33484A;
+    --accent-soft: #E7EDEC;
+    --accent-ink: #1C2B2C;
+    --result-bg: #F1ECDF;
+    --result-line: #C9BFA0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+  }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.3;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .sub {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 36px;
+    max-width: 58ch;
+  }
+  .progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .progress .seg {
+    flex: 1;
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress .seg .fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.2s ease;
+  }
+  .progress .seg.done .fill { width: 100%; }
+  .progress .seg.current .fill { width: 50%; }
+  .step-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 40px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 32px;
+  }
+  .question {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19px;
+    font-weight: 400;
+    margin: 0 0 24px;
+    line-height: 1.4;
+  }
+  .options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .opt {
+    padding: 14px 14px;
+    font-size: 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    color: var(--ink);
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .opt:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .back {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+  }
+  .back:hover { color: var(--ink); }
+  .help-toggle {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    margin: -8px 0 20px;
+    text-decoration: underline;
+    font-family: inherit;
+    display: block;
+  }
+  .help-intro {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+  }
+  .help-panel {
+    margin: 0 0 24px;
+    padding: 6px 18px 4px;
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .help-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .help-item:last-child { border-bottom: none; }
+  .help-curve {
+    flex: 0 0 64px;
+    padding-top: 2px;
+  }
+  .help-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .help-prompt {
+    display: block;
+    margin-top: 5px;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .summary-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19px;
+    font-weight: 400;
+    margin: 0 0 8px;
+  }
+  .lead-stat {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 24px;
+  }
+  .multi-note li { margin-bottom: 10px; }
+  .multi-note li:last-child { margin-bottom: 0; }
+  .skill-table-wrap {
+    margin: 14px 0 22px;
+  }
+  .help-panel.results-panel {
+    padding: 20px 22px;
+    margin: 4px 0 28px;
+  }
+  .results-panel .skill-table-caption { margin: 0 0 8px; }
+  .results-panel .heat-axis-note { margin: 0 0 20px; }
+  .results-panel .answers-head { margin: 0 0 9px; }
+  .results-panel .path { margin: 0 0 24px; }
+  .results-panel .skill-table-wrap { margin: 0; }
+  .results-panel .heat-scroll { margin: 0 0 12px; }
+  .results-panel .skill-table-note { margin: 10px 2px 0; }
+  .skill-table-caption {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  .heat-axis-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  .heat-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 0 12px;
+    border-radius: 8px;
+  }
+  .heat-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 11px;
+    color: var(--ink);
+  }
+  .heat-table th, .heat-table td { border: 1px solid var(--line); }
+  .heat-table td.cell {
+    padding: 7px 4px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    min-width: 40px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .heat-table th.colhead {
+    padding: 6px 4px;
+    font-weight: 600;
+    font-size: 10px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    text-align: center;
+    background: var(--bg);
+  }
+  .heat-table th.rowhead {
+    padding: 6px 8px;
+    font-weight: 600;
+    font-size: 10px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    text-align: right;
+    background: var(--bg);
+  }
+  .heat-table th.corner { background: var(--panel); border-color: transparent; }
+  .heat-table th.axis-blank { background: transparent; border-color: transparent; }
+  .heat-table th.axis-top {
+    padding: 0 0 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    background: transparent;
+    border-color: transparent;
+  }
+  .heat-table th.axis-left {
+    padding: 0 6px 0 0;
+    background: transparent;
+    border-color: transparent;
+    vertical-align: middle;
+  }
+  .heat-table th.axis-left span {
+    display: inline-block;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .heat-table th.colhead.hl,
+  .heat-table th.rowhead.hl { color: var(--accent-ink); background: var(--accent-soft); }
+  .heat-table td.me {
+    outline: 3px solid var(--accent);
+    outline-offset: -3px;
+    font-weight: 700;
+    color: var(--accent-ink);
+  }
+  .heat-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 0 0 4px;
+  }
+  .heat-legend .lk {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .heat-legend .sw {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.12);
+    flex: 0 0 auto;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .effort-note {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 12px 0 0;
+  }
+  .effort-note-head {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent-ink);
+    margin: 0 0 6px;
+  }
+  .effort-note strong { color: var(--accent-ink); }
+  .compensate-inline {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    background: #EAF0F4;
+    border: 1px solid #BFD0DC;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 14px 0 0;
+  }
+  .skill-table-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 8px 2px 0;
+  }
+  .path {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 0 0 28px;
+  }
+  .node {
+    flex: 1 1 0;
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 9px 11px;
+    background: var(--bg);
+  }
+  .node .k {
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.35;
+    color: var(--ink-soft);
+    margin-bottom: 2px;
+  }
+  .node .v {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-ink);
+  }
+  .answers-head {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  @media (max-width: 560px) {
+    .path { flex-direction: column; }
+    .path .connector { width: 1px; height: 14px; margin-left: 24px; align-self: flex-start; }
+  }
+  .connector {
+    flex: 0 0 auto;
+    align-self: center;
+    width: 16px;
+    height: 1px;
+    background: var(--line);
+  }
+  .path .connector:last-child { display: none; }
+  .result {
+    background: var(--result-bg);
+    border: 1px solid var(--result-line);
+    border-radius: 8px;
+    padding: 20px 22px;
+    margin: 4px 0 28px;
+  }
+  .result .lead {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  .verdict-key { font-weight: 700; color: #1F8A6D; }
+  .result .verdict {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.5;
+    margin: 0 0 10px;
+  }
+  .result .raw {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 0;
+    border-top: 1px solid var(--result-line);
+    padding-top: 10px;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    padding: 11px 18px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #FAF8F4;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .copied {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    min-height: 18px;
+  }
+  footer {
+    margin-top: 56px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .footer-name {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 14px;
+    color: var(--ink);
+    margin: 0 0 2px;
+  }
+  .footer-meta {
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+    margin: 0;
+  }
+  @media print {
+    .progress, .back, .actions, footer, h1, .sub, .step-label, .help-toggle { display: none; }
+    .panel { border: none; padding: 0; }
+    body { background: #fff; }
+  }
+  .skill-tag {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  .skill-heading {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    font-weight: 400;
+    margin: 28px 0 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .path > .skill-heading:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+  .setup-select, .skill-name-input {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .setup-select { max-width: 160px; }
+  .multi-note {
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 4px 0 28px;
+  }
+  .multi-note .verdict { font-size: 15px; margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; }
+  .multi-note .raw { font-size: 13px; color: var(--ink-soft); margin: 0 0 14px; }
+  .multi-note .raw:last-child { margin-bottom: 0; }
+  .q-intro {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: -14px 0 22px;
+    line-height: 1.5;
+  }
+  .q-intro .q-cond { font-weight: 600; color: var(--ink); }
+  .q-intro ul.q-cond-list { margin: 6px 0 0; padding-left: 20px; }
+  .q-intro ul.q-cond-list li { margin-bottom: 6px; }
+  .skills-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--ink);
+    margin: 12px 0 0;
+  }
+  .skills-check .chk {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 700;
+    flex: 0 0 auto;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .skills-check .chk.yes { color: #3F7A4E; border-color: #9BC3A5; background: #EAF3EC; }
+  .skills-check .chk.no { color: #B24A3E; border-color: #D9A69E; background: #F6E9E7; }
+  .section-heading {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .section-intro {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0 0 26px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .options.options-stack { flex-direction: column; align-items: stretch; }
+  .opt-rich {
+    display: block;
+    text-align: left;
+    width: 100%;
+    padding: 14px 16px;
+    line-height: 1.5;
+  }
+  .opt-rich .opt-label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .opt-rich .opt-desc { display: block; font-size: 12.5px; color: var(--ink-soft); }
+  .opt-rich:hover .opt-desc { color: var(--ink); }
+  .spectrum-block {
+    background: var(--result-bg);
+    border: 1px solid var(--result-line);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin: 8px 0 28px;
+  }
+  .spectrum-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+  .spectrum-wrap { position: relative; padding: 6px 0 0; }
+  .spectrum-bar {
+    height: 8px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #D75A4C, #EE9F45, #F2DA6B, #AFD49B, #6FB173);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .spectrum-marker {
+    position: absolute;
+    top: 0;
+    width: 3px;
+    height: 20px;
+    background: var(--ink);
+    border-radius: 2px;
+    transform: translateX(-50%);
+  }
+  .spectrum-block-out {
+    position: absolute;
+    top: 6px;
+    height: 8px;
+    background: rgba(250, 248, 244, 0.78);
+    border-radius: 0 5px 5px 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .spectrum-ceiling {
+    position: absolute;
+    top: 2px;
+    width: 2px;
+    height: 16px;
+    background: var(--ink-soft);
+    opacity: 0.55;
+  }
+  .spectrum-key {
+    display: flex;
+    align-items: center;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin: 14px 0 0;
+  }
+  .spectrum-key .key-marker {
+    display: inline-block;
+    width: 3px; height: 13px;
+    background: var(--ink);
+    border-radius: 2px;
+    margin-right: 6px;
+  }
+  .spectrum-key .key-ceiling {
+    display: inline-block;
+    width: 2px; height: 13px;
+    background: var(--ink-soft);
+    opacity: 0.55;
+    margin-right: 6px;
+  }
+  .spectrum-ends {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+  .spectrum-note {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 16px 0 0;
+  }
+  .spectrum-note strong { color: var(--accent-ink); }
+  .compensate-block {
+    background: #EAF0F4;
+    border: 1px solid #BFD0DC;
+    border-radius: 8px;
+    padding: 20px 22px;
+    margin: 4px 0 28px;
+  }
+  .compensate-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .compensate-text {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .compensate-text:last-child { margin-bottom: 0; }
+  .breakdown-block {
+    background: #EFEAF2;
+    border: 1px solid #CDC2D6;
+    border-radius: 8px;
+    padding: 20px 22px;
+    margin: 4px 0 28px;
+  }
+  .breakdown-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .breakdown-lead {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+  .breakdown-lead strong { color: var(--ink); }
+  .factor { margin-bottom: 14px; }
+  .factor:last-of-type { margin-bottom: 0; }
+  .factor-group-head {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #5B4A6B;
+    margin: 0 0 10px;
+  }
+  .factor-minor .factor-head { margin-bottom: 0; }
+  .factor-minor .chk {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 700;
+    flex: 0 0 auto;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .factor-minor .chk.yes { color: #3F7A4E; border-color: #9BC3A5; background: #EAF3EC; }
+  .factor-minor .chk.no { color: #B24A3E; border-color: #D9A69E; background: #F6E9E7; }
+  .factor-effect {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 5px 0 0;
+  }
+  .breakdown-foot {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 18px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid #CDC2D6;
+  }
+  .factor-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .factor-name { font-size: 13px; color: var(--ink); }
+  .factor-word {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #5B4A6B;
+    white-space: nowrap;
+  }
+  .factor-track {
+    height: 7px;
+    border-radius: 4px;
+    background: #DED5E4;
+    overflow: hidden;
+  }
+  .factor-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: #7C6A8D;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .more-block {
+    background: #E9F0E4;
+    border: 1px solid #C2D5BA;
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin-top: 28px;
+  }
+  .more-heading {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #2F5233;
+    margin: 0 0 12px;
+  }
+  .more-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 18px;
+  }
+  .more-question {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 0 0 16px;
+  }
+  .q-intro p.band { margin: 0 0 10px; }
+  .q-intro p.band:last-child { margin-bottom: 0; }
+  .q-intro p.band strong { color: var(--ink); }
+  .check-list { display: flex; flex-direction: column; gap: 10px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    width: 100%;
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .check-item:hover { border-color: var(--accent); }
+  .check-item.on { border-color: var(--accent); background: var(--accent-soft); }
+  .check-box {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    background: #FFF;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-ink);
+    margin-top: 1px;
+  }
+  .check-item.on .check-box { border-color: var(--accent); }
+  .spectrum-lead {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>Epistemic Justification and Dream Achievement: A Self-Assessment Tool</h1>
+    <p class="sub">An interactive tool for assessing the extent to which a person can be epistemically justified in believing that they can achieve their dream if they try hard enough.</p>
+  </header>
+  <div class="progress" id="progress"></div>
+  <p class="step-label" id="stepLabel"></p>
+  <section id="app"></section>
+  <footer>
+    <p class="footer-meta">PhD Research Candidate Danielle Lawrence</p>
+    <p class="footer-meta">University of Waikato</p>
+    <p class="footer-meta">2026</p>
+  </footer>
+</main>
+<script>
+  var SIM_DATA = {"Normal distribution|Normal distribution":{"Top 10%":[[0,0,0,0,0,0,4,31],[0,0,0,0,1,35,89,100],[0,0,0,20,80,100,100,100],[0,0,21,99,100,100,100,100],[0,1,82,100,100,100,100,100],[0,35,100,100,100,100,100,100],[4,89,100,100,100,100,100,100],[30,100,100,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,19],[0,0,0,0,0,0,6,92],[0,0,0,0,0,0,42,100],[0,0,0,0,0,5,87,100],[0,0,0,0,5,72,100,100],[0,0,7,42,90,100,100,100],[0,20,91,100,100,100,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,5.2],[0,0,0,0,0,0,0,23.6],[0,0,0,0,0,0,0,66.7],[0,0,0,0,0,0,18.5,100],[0,0,0,0,0,18.5,83.6,100],[0,0,4.8,21.1,65,100,100,100]]},"Left skewed|Normal distribution":{"Top 10%":[[0,0,0,0,0,17,60,87],[0,0,0,0,30,99,100,100],[0,0,0,7,94,100,100,100],[0,0,0,45,100,100,100,100],[0,0,0,80,100,100,100,100],[0,0,13,100,100,100,100,100],[0,0,45,100,100,100,100,100],[0,1,84,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,0,39],[0,0,0,0,0,0,23,100],[0,0,0,0,0,0,53,100],[0,0,0,0,0,0,74,100],[0,0,0,0,0,0,91,100],[0,0,0,0,0,14,100,100],[0,0,0,0,0,45,100,100],[0,0,0,0,5,87,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,4],[0,0,0,0,0,0,0,37.9],[0,0,0,0,0,0,0,72.6],[0,0,0,0,0,0,1.1,98],[0,0,0,0,0,0,6.8,100],[0,0,0,0,0,0,17.4,100],[0,0,0,0,0,0,36.4,100],[0,0,0,0,0,0,64.2,100]]},"Normal distribution|Left skewed":{"Top 10%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1],[0,0,0,0,0,16,48,88],[0,0,9,49,84,100,100,100],[0,31,95,100,100,100,100,100],[16,98,100,100,100,100,100,100],[59,100,100,100,100,100,100,100],[86,100,100,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,4],[0,0,0,0,0,15,47,91],[0,23,53,75,93,100,100,100],[38,100,100,100,100,100,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1.3,7.1,18.7,36.6,66.4],[4,36.5,73.5,99.4,100,100,100,100]]},"Left skewed|Left skewed":{"Top 10%":[[0,0,0,0,0,0,0,8],[0,0,0,0,3,36,83,100],[0,0,1,37,91,100,100,100],[0,0,37,100,100,100,100,100],[0,4,91,100,100,100,100,100],[0,37,100,100,100,100,100,100],[1,82,100,100,100,100,100,100],[17,100,100,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,6],[0,0,0,0,0,0,5,78],[0,0,0,0,0,0,45,100],[0,0,0,0,0,11,93,100],[0,0,0,0,11,81,100,100],[0,0,5,44,93,100,100,100],[0,7,79,100,100,100,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0.1],[0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,12.6],[0,0,0,0,0,0,0,53.1],[0,0,0,0,0,0,22,100],[0,0,0,0,0,22,87.1,100],[0,0,1.6,13.6,58,100,100,100]]},"Right skewed|Right skewed":{"Top 10%":[[0,0,0,0,0,0,6,44],[0,0,0,0,0,27,89,100],[0,0,0,6,61,100,100,100],[0,0,7,87,100,100,100,100],[0,0,68,100,100,100,100,100],[0,35,100,100,100,100,100,100],[10,95,100,100,100,100,100,100],[53,100,100,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,32],[0,0,0,0,0,0,7,95],[0,0,0,0,0,0,36,100],[0,0,0,0,0,1,79,100],[0,0,0,0,1,57,100,100],[0,0,10,42,82,100,100,100],[3,42,99,100,100,100,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,2],[0,0,0,0,0,0,0,11],[0,0,0,0,0,0,0,30],[0,0,0,0,0,0,0,64],[0,0,0,0,0,0,13,100],[0,0,0,0,0,15,77,100],[0,3,12,30,70,100,100,100]]},"Right skewed|Left skewed":{"Top 10%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,14],[0,0,0,1,16,43,78,100],[0,28,70,96,100,100,100,100],[35,100,100,100,100,100,100,100],[83,100,100,100,100,100,100,100],[98,100,100,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,1,17],[5,30,48,58,67,79,95,100],[72,100,100,100,100,100,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,1,4,12,22],[18,53,76,90,99,100,100,100]]},"Left skewed|Right skewed":{"Top 10%":[[0,0,0,0,0,34,82,97],[0,0,0,0,29,100,100,100],[0,0,0,0,73,100,100,100],[0,0,0,3,98,100,100,100],[0,0,0,23,100,100,100,100],[0,0,0,49,100,100,100,100],[0,0,1,85,100,100,100,100],[0,0,19,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,4,72],[0,0,0,0,0,0,31,100],[0,0,0,0,0,0,48,100],[0,0,0,0,0,0,59,100],[0,0,0,0,0,0,66,100],[0,0,0,0,0,0,79,100],[0,0,0,0,0,1,96,100],[0,0,0,0,0,19,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,19],[0,0,0,0,0,0,0,50],[0,0,0,0,0,0,0,74],[0,0,0,0,0,0,0,90],[0,0,0,0,0,0,1,98],[0,0,0,0,0,0,5,100],[0,0,0,0,0,0,11,100],[0,0,0,0,0,0,20,100]]},"Normal distribution|Right skewed":{"Top 10%":[[0,0,0,0,0,1,30,68],[0,0,0,0,11,74,100,100],[0,0,0,16,91,100,100,100],[0,0,3,88,100,100,100,100],[0,0,35,100,100,100,100,100],[0,2,86,100,100,100,100,100],[0,39,100,100,100,100,100,100],[4,93,100,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,0,13],[0,0,0,0,0,0,6,90],[0,0,0,0,0,0,36,100],[0,0,0,0,0,0,66,100],[0,0,0,0,0,5,95,100],[0,0,0,0,0,44,100,100],[0,0,0,1,35,97,100,100],[0,0,11,71,100,100,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,1.4],[0,0,0,0,0,0,0,15.6],[0,0,0,0,0,0,0,48.3],[0,0,0,0,0,0,0,77.4],[0,0,0,0,0,0,3.9,99.8],[0,0,0,0,0,0,22.9,100],[0,0,0,0,0,0.8,63.9,100],[0,0,0,0,3.7,49.1,100,100]]},"Right skewed|Normal distribution":{"Top 10%":[[0,0,0,0,0,0,0,3],[0,0,0,0,0,2,39,93],[0,0,0,3,37,86,100,100],[0,0,16,87,100,100,100,100],[0,10,91,100,100,100,100,100],[1,75,100,100,100,100,100,100],[30,100,100,100,100,100,100,100],[70,100,100,100,100,100,100,100]],"Top 2%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,10],[0,0,0,0,0,0,1,72],[0,0,0,0,0,0,34,100],[0,0,0,0,4,44,96,100],[0,5,36,69,95,100,100,100],[14,88,100,100,100,100,100,100]],"Top 0.5%":[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,2.7],[0,0,0,0,0,0,0.4,48.6],[0,0,0,0,3.6,22.1,64.3,100],[1.4,15,47.5,78.9,99.6,100,100,100]]}};
+
+  var PCT = ['Bottom 50%','50-70%','70-80%','80-85%','85-90%','90-95%','95-99%','Top 1%'];
+  var DIST_OPTIONS = ['Left skewed', 'Normal distribution', 'Right skewed'];
+  // This version assumes both talent and effort are left-skewed among those pursuing a
+  // sufficiently selective dream (competition is high and well known), so we always use
+  // the left-skewed / left-skewed table regardless of the required percentile chosen.
+  var DIST_KEY = 'Left skewed|Left skewed';
+  var SHOWN_ANSWER_KEYS = ['requiredPercentile', 'talentPercentile_0', 'effortPercentile_0', 'opportunities', 'resultantLuck'];
+  var REQUIRED_PCT_OPTIONS = [
+    { label: '10%', value: 'Top 10%' },
+    { label: '2%', value: 'Top 2%' },
+    { label: '0.5%', value: 'Top 0.5%' }
+  ];
+
+  var NOTES = {
+    requiredPercentile: 'This should reflect the share of people who succeed without relying on advantages you personally can\u2019t replicate \u2014 such as pre-existing industry connections or extreme inherited wealth. If a meaningful portion of those who \u201cmake it\u201d did so mainly because of unreplicable advantages like these, subtract that portion from your estimate, then choose whichever of the three options below comes closest.',
+    talentPercentile: '<strong>Domain-specific skill</strong> refers to the main skill the dream itself is built on \u2014 the core ability you would be judged on, rather than the supporting skills that surround it. For a novelist it is writing; for a surgeon, surgical technique; for a footballer, playing football; for a musician, playing their instrument; for a software engineer, programming; etc.\n\nEstimate this from direct evidence where you have it \u2014 past performance, grades, or results in this specific area, relative to others. Importantly, also factor in how much effort that result took: if you matched others\u2019 results while putting in less effort than they did, your talent is likely higher than the result alone suggests; if it took you more effort than others to get the same result, your talent is likely lower. Without direct evidence, look to related indicators \u2014 how quickly you pick up similar skills.',
+    resultantLuck: 'Resultant luck is the luck involved in the outcome of an attempt once it is made \u2014 the part of success that is not within your control even when your skill is fixed. It cannot be known exactly, but dreams differ in how much of it is involved, and you can place yours on a rough scale.\n\nThe more resultant luck is involved in each attempt, the more attempts a person needs before their skill reliably shows through in outcomes. So where luck is low, even a few opportunities can be enough for a skilled person to succeed; where luck is high, many attempts may be needed, and the opportunities available to you are worth correspondingly less. Think about whether, among people of genuinely similar high skill pursuing this dream, outcomes are decided mostly by that skill, or substantially by factors outside their control such as timing, taste, or the preferences of particular decision makers.',
+    compensate: 'For some dreams, strength in a supporting skill can compensate for some domain-specific ability. An actor who is not the most technically skilled may still find success through networking, leaving a lasting impression, and being easy to work with, because film work is highly collaborative. A writer whose prose is not the strongest may still find success through well-judged strategic choices about what to write and who to write it for, and through skilled promotion of their work.\n\nThings to consider: Does this dream have multiple pathways to success, or is it decided almost entirely by outperforming others in the one skillset? In elite sport or orchestral performance there is little room to compensate; in most careers, there is more.\n\nAnswer yes only where you have strong evidence that this applies to you and your dream, not merely a hope that it might.',
+    effortPercentile: 'This is about your maximum capacity, not your current habits. Considering the amount of effort others pursuing this dream dedicate to developing this skill, if you were trying your hardest, could you put in as much effort as the people putting in the most effort (top 1%)?\n\nThings that may limit your capacity include whether you would need to work an unrelated job to support yourself while developing this skill (especially if most people do not need to do this), whether you have other life commitments which take a significant amount of your time, and whether, if most successful people in this area started young, your starting age leaves you enough time to catch up. Where you face fewer constraints than most people pursuing this dream, your percentile is likely higher; where you face more, it is likely lower.'
+  };
+
+  function renderNote(key) {
+    var text = NOTES[key];
+    if (!text) return '';
+    var html = '<button class="help-toggle" id="noteToggle-' + key + '" onclick="toggleNote(\'' + key + '\')">Not sure? See how to think about this &darr;</button>';
+    html += '<div class="help-panel" id="notePanel-' + key + '" style="display:none;">';
+    var paras = text.split('\n\n');
+    paras.forEach(function(p, idx) {
+      var top = idx === 0 ? 14 : 0;
+      var bottom = idx === paras.length - 1 ? 14 : 10;
+      html += '<p class="help-text" style="padding:' + top + 'px 2px ' + bottom + 'px;">' + p + '</p>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function toggleNote(key) {
+    var panel = document.getElementById('notePanel-' + key);
+    var btn = document.getElementById('noteToggle-' + key);
+    var isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : 'block';
+    btn.innerHTML = isOpen ? 'Not sure? See how to think about this &darr;' : 'Hide help &uarr;';
+  }
+
+  var HELP = {
+    effort: [
+      { type: 'left', label: 'Left-skewed', desc: 'most attempters are already putting in serious effort, with relatively few attempting to do this in their spare time.', prompt: '\u201cDoes just being in the running already require having expended a large amount of effort?\u201d \u2192 left skewed.' },
+      { type: 'normal', label: 'Normal', desc: 'typical effort expenditure is at a moderate level, and an even amount of people are extremely lazy as extremely obsessive.', prompt: '\u201cIs moderate effort the norm here?\u201d \u2192 normal.' },
+      { type: 'right', label: 'Right skewed', desc: 'most attempters put in only a casual amount of effort, with few going all-in.', prompt: '\u201cDo many people attempt this casually, with only a few fully committing?\u201d \u2192 right skewed.' }
+    ],
+    talent: [
+      { type: 'left', label: 'Left skewed', desc: 'most people cluster toward the high end, with only a few trailing toward low. Often seen in dreams where attempters already had to clear a bar \u2014 auditions, qualifying standards \u2014 before they counted as \u201ctrying.\u201d', prompt: '\u201cDid most attempters already have to prove some baseline ability before they could start seriously trying?\u201d \u2192 left skewed.' },
+      { type: 'normal', label: 'Normal', desc: 'most people cluster around average, tapering off evenly on both ends.', prompt: '\u201cIs this kind of talent fairly common, and do people with a wide variety of talent levels attempt this dream?\u201d \u2192 normal.' },
+      { type: 'right', label: 'Right skewed', desc: 'most people cluster toward the low end, with only a few trailing toward high.', prompt: '\u201cCan anyone try, but is real talent for this rare even among those who do?\u201d \u2192 right skewed.' }
+    ]
+  };
+
+  function curveSVG(type) {
+    var paths = {
+      normal: 'M4,30 C18,30 26,4 50,4 C74,4 82,30 96,30',
+      right: 'M4,30 C10,10 18,4 28,4 C40,4 55,16 70,24 C80,28 88,30 96,31',
+      left: 'M4,31 C12,30 20,28 30,24 C45,16 60,4 72,4 C82,4 90,10 96,30'
+    };
+    return '<svg viewBox="0 0 100 36" width="64" height="24" aria-hidden="true">' +
+      '<line x1="2" y1="32" x2="98" y2="32" stroke="var(--line)" stroke-width="1"></line>' +
+      '<path d="' + paths[type] + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"></path>' +
+      '</svg>';
+  }
+
+  function renderHelp(key) {
+    var items = HELP[key];
+    if (!items) return '';
+    var html = '<p class="help-intro">Where possible, look up real data on the actual distribution rather than guessing. If that\u2019s not available, here\u2019s how to reason it out:</p>';
+    html += '<div class="help-panel">';
+    items.forEach(function(item) {
+      html += '<div class="help-item">';
+      html += '<div class="help-curve">' + curveSVG(item.type) + '</div>';
+      html += '<div class="help-text"><strong>' + item.label + '</strong> \u2014 ' + item.desc + '<span class="help-prompt">' + item.prompt + '</span></div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  var state = {
+    questions: [],
+    step: 0,
+    answers: {}
+  };
+
+  function buildFlow() {
+    var qs = [
+      {
+        key: 'requiredPercentile',
+        label: 'Success rate',
+        helpKey: 'requiredPercentile',
+        question: 'Regarding your specific dream, what percentage of people who attempt it end up achieving it without relying on extreme, unreplicable circumstantial luck?',
+        options: REQUIRED_PCT_OPTIONS
+      },
+      {
+        key: 'qualifying', label: 'Minimum qualifying requirements',
+        question: 'Do you, or could you with effort, meet any minimum qualifying requirements for achieving your dream?',
+        introHTML: 'e.g. health, age, vision, hearing requirements, etc.',
+        options: ['Yes', 'No']
+      }
+    ];
+    if (state.answers.qualifying === 'No') { return qs; }
+    qs.push(
+      {
+        key: 'talentPercentile_0', label: 'Talent percentile', helpKey: 'talentPercentile', skillIndex: 0,
+        question: 'Relative to others pursuing this dream, what do you estimate your talent percentile to be for the domain-specific skill required for achieving your dream?',
+        options: PCT
+      },
+      {
+        key: 'effortPercentile_0', label: 'Maximum effort percentile', helpKey: 'effortPercentile', skillIndex: 0,
+        question: 'If you were trying your absolute hardest, relative to others pursuing this dream, what is the maximum effort percentile you could be in regarding effort dedicated to developing the domain-specific skill required for achieving your dream?',
+        options: PCT
+      },
+      {
+        key: 'otherSkills', label: 'Other important skills required',
+        question: 'Are there other important skills required for achieving this dream?',
+        introHTML: 'e.g. interpersonal, networking, self-promotion, business, cognitive or strategic skills',
+        options: ['Yes', 'No']
+      }
+    );
+    if (state.answers.otherSkills === 'Yes') {
+      qs.push({
+        key: 'otherSkillsCovered', label: 'Other skills coverable',
+        question: 'Do either of the following apply to you?',
+        introHTML: '<span class="q-cond">Either:</span><ul class="q-cond-list"><li>You have, or could achieve with effort, sufficiently competitive levels of these other relevant skills \u2014 on top of developing the domain-specific skill required; or</li><li>the tasks these secondary skills are required for can be outsourced, and you have adequate resources to outsource them.</li></ul>',
+        options: ['Yes', 'No']
+      });
+      if (state.answers.otherSkillsCovered === 'No') { return qs; }
+    }
+
+    if (state.answers.otherSkills === 'Yes') {
+      qs.push({
+        key: 'compensate', label: 'Compensating skills', helpKey: 'compensate',
+        question: 'Do you have strong evidence suggesting that you could develop one or more of your other relevant skills to a level high enough to compensate for a lower level of domain-specific skill?',
+        options: ['Yes', 'No']
+      });
+    }
+    qs.push({
+      key: 'attemptTime', label: 'Time to make attempts', interstitial: true,
+      question: 'After developing your skills, will you still have time to make attempts toward achieving this dream?',
+      options: ['Yes', 'No']
+    });
+    if (state.answers.attemptTime !== 'Yes') { return qs; }
+
+    qs.push({
+      key: 'opportunities', label: 'Opportunities available',
+      question: 'Over the years you would spend pursuing this dream, roughly how many opportunities are likely to arise for you to attempt to achieve it?',
+      introHTML: '<p class="band"><strong>Very few</strong> \u2014 the dream involves a single fixed target, or only a very small number of opportunities exist. For example, winning an Olympic medal in your event, obtaining a principal chair in a top orchestra, or securing a specific senior position at a particular company.</p><p class="band"><strong>Some</strong> \u2014 opportunities arise occasionally, but remain relatively rare and highly competitive. For example, obtaining a professor position within your own country, or being cast in major film roles.</p><p class="band"><strong>Many</strong> \u2014 opportunities arise somewhat regularly, across multiple locations or repeatedly over time. For example, obtaining a professor position anywhere in the world, or auditioning for acting work more generally.</p><p class="band"><strong>Primarily self-generated</strong> \u2014 the number of opportunities depends largely on your own initiative, time, and resources, rather than on externally available positions opening up. For example, writing books, starting businesses, or releasing music.</p>',
+      options: ['Very few', 'Some', 'Many', 'Primarily self-generated']
+    });
+    qs.push({
+      key: 'resultantLuck', label: 'Resultant luck', helpKey: 'resultantLuck',
+      question: 'For this dream, how much does luck influence the outcome of each individual attempt?',
+      introHTML: '<p class="band"><strong>Low</strong> \u2014 outcomes track skill closely; the better performer almost always wins. For example, chess, individual timed sports, or most exams.</p><p class="band"><strong>Moderate</strong> \u2014 skill dominates but chance clearly intrudes. For example, tennis, or hiring for a competitive job.</p><p class="band"><strong>High</strong> \u2014 skill matters, but any single outcome involves significant luck in who succeeds among the highly skilled (often based on the personal preferences of the decision makers). For example, getting a novel accepted, winning a funding grant, or an audition.</p><p class="band"><strong>Very high</strong> \u2014 skill gets you into contention, then luck largely decides. For example, a song going viral, a startup catching a trend, or a breakout acting role.</p>',
+      options: ['Low', 'Moderate', 'High', 'Very high']
+    });
+    qs.push({
+      key: 'attemptFactors', label: 'Attempt factors',
+      question: 'Which of the following apply to you?',
+      introHTML: 'Tick all that apply.',
+      multi: true,
+      items: [
+        { key: 'capBaseline', text: 'I can make at least the typical number of attempts that someone pursuing this dream would make.' },
+        { key: 'capResources', text: 'I have, or could attain, family support, savings, or other resources that would allow me to make more attempts than a typical person pursuing this dream.' },
+        { key: 'capYears', text: 'I am able to spend more years pursuing this dream than people typically do.' },
+        { key: 'capCommitments', text: 'I do not have competing life commitments or health issues which would limit the amount of time I can spend pursuing this dream.' }
+      ]
+    });
+    qs.push({
+      key: 'matthew', label: 'Starting advantage',
+      question: 'Are you likely to start pursuing this dream from an advantaged position?',
+      introHTML: 'For example, greater finances, insider connections, or training from a prestigious institution. Advantages tend to compound over time and this is called the \u2018Matthew Effect\u2019 or \u2018Cumulative advantage\u2019.',
+      options: ['Yes', 'No']
+    });
+    qs.push({
+      key: 'belief', label: 'Belief',
+      question: 'Do you genuinely believe that you can achieve this dream if you try hard enough?',
+      options: ['Yes', 'No']
+    });
+    return qs;
+  }
+
+  function renderProgress() {
+    var el = document.getElementById('progress');
+    var label = document.getElementById('stepLabel');
+    var total = state.questions.length;
+    var html = '';
+    for (var i = 0; i < total; i++) {
+      var cls = 'seg';
+      if (i < state.step) cls += ' done';
+      else if (i === state.step) cls += ' current';
+      html += '<div class="' + cls + '"><div class="fill"></div></div>';
+    }
+    el.innerHTML = html;
+    if (state.step < total) {
+      label.textContent = 'Question ' + (state.step + 1) + ' of ' + total;
+    } else {
+      label.textContent = 'Your results';
+    }
+  }
+
+  function render() {
+    renderProgress();
+    var app = document.getElementById('app');
+
+    if (state.step < state.questions.length) {
+      var q = state.questions[state.step];
+
+      if (q.interstitial) {
+        app.innerHTML = renderSkillResults(true);
+        return;
+      }
+
+      var html = '<div class="panel">';
+      if (q.sectionHeading) {
+        html += '<p class="section-heading">' + q.sectionHeading + '</p>';
+        if (q.sectionIntro) { html += '<p class="section-intro">' + q.sectionIntro + '</p>'; }
+      }
+      html += '<p class="question">' + q.question + '</p>';
+      if (q.introHTML) { html += '<div class="q-intro">' + q.introHTML + '</div>'; }
+      html += renderHelp(q.helpKey || q.key);
+      html += renderNote(q.helpKey || q.key);
+
+      if (q.multi) {
+        html += '<div class="check-list">';
+        q.items.forEach(function(item, idx) {
+          var on = state.answers[item.key] === 'Yes';
+          html += '<button class="check-item' + (on ? ' on' : '') + '" onclick="toggleCheck(\'' + item.key + '\')">';
+          html += '<span class="check-box">' + (on ? '&#10003;' : '') + '</span>';
+          html += '<span class="check-text">' + item.text + '</span>';
+          html += '</button>';
+        });
+        html += '</div>';
+        html += '<div class="actions" style="margin-top:22px;"><button class="back" onclick="goBack()">&larr; Back</button><button class="btn primary" onclick="confirmMulti()">Continue</button></div>';
+        html += '</div>';
+        app.innerHTML = html;
+        return;
+      }
+
+      var hasDesc = q.options.some(function(o) { return o && typeof o === 'object' && o.desc; });
+      html += '<div class="options' + (hasDesc ? ' options-stack' : '') + '">';
+      for (var i = 0; i < q.options.length; i++) {
+        var opt = q.options[i];
+        var lbl = (opt && typeof opt === 'object') ? opt.label : opt;
+        if (opt && typeof opt === 'object' && opt.desc) {
+          html += '<button class="opt opt-rich" onclick="select(' + i + ')"><span class="opt-label">' + lbl + '</span><span class="opt-desc">' + opt.desc + '</span></button>';
+        } else {
+          html += '<button class="opt" onclick="select(' + i + ')">' + lbl + '</button>';
+        }
+      }
+      html += '</div>';
+      if (state.step > 0) {
+        html += '<div class="actions" style="margin-top:20px;"><button class="back" onclick="goBack()">&larr; Back</button></div>';
+      }
+      html += '</div>';
+      app.innerHTML = html;
+    } else {
+      app.innerHTML = renderSummary();
+    }
+  }
+
+  function select(i) {
+    var q = state.questions[state.step];
+    var opt = q.options[i];
+    var val = (opt && typeof opt === 'object') ? opt.value : opt;
+    state.answers[q.key] = val;
+    state.questions = buildFlow();
+    state.step += 1;
+    render();
+  }
+
+  function displayAnswer(q) {
+    var val = state.answers[q.key];
+    for (var i = 0; i < q.options.length; i++) {
+      var opt = q.options[i];
+      if (opt && typeof opt === 'object') {
+        if (opt.value === val) return opt.label;
+      } else if (opt === val) {
+        return opt;
+      }
+    }
+    return val;
+  }
+
+  function toggleCheck(key) {
+    state.answers[key] = (state.answers[key] === 'Yes') ? 'No' : 'Yes';
+    render();
+  }
+
+  function confirmMulti() {
+    var q = state.questions[state.step];
+    q.items.forEach(function(item) {
+      if (state.answers[item.key] === undefined) { state.answers[item.key] = 'No'; }
+    });
+    state.answers[q.key] = 'done';
+    state.questions = buildFlow();
+    state.step += 1;
+    render();
+  }
+
+  function goBack() {
+    if (state.step === 0) { return; }
+    var prev = state.questions[state.step - 1];
+    if (prev.multi) {
+      prev.items.forEach(function(item) { delete state.answers[item.key]; });
+    }
+    delete state.answers[prev.key];
+    state.step -= 1;
+    state.questions = buildFlow();
+    render();
+  }
+
+  function restart() {
+    state.questions = buildFlow();
+    state.step = 0;
+    state.answers = {};
+    render();
+  }
+
+  function classifyBelief(pct, pctLabel) {
+    var pre = 'Regarding the domain-specific skill required for achieving your dream, you are epistemically justified in believing that you ';
+    var suf = ' this skill to a competitive level (the top ' + pctLabel + ' of skill for this domain), at your highest level of effort';
+    function key(t) { return '<span class="verdict-key">' + t + '</span>'; }
+    if (pct === 0) { return pre + key('could not realistically') + ' develop' + suf; }
+    if (pct <= 20) { return pre + 'are ' + key('very unlikely') + ' to develop' + suf; }
+    if (pct <= 41) { return pre + 'are ' + key('unlikely') + ' to develop' + suf; }
+    if (pct <= 58) { return pre + 'have a ' + key('roughly even chance') + ' of developing' + suf; }
+    if (pct <= 79) { return pre + 'could ' + key('likely') + ' develop' + suf; }
+    if (pct < 100) { return pre + 'could ' + key('very likely') + ' develop' + suf; }
+    return pre + key('can') + ' develop' + suf;
+  }
+
+  function getResultForSkill(i) {
+    var a = state.answers;
+    var talentPct = a['talentPercentile_' + i];
+    var effortPct = a['effortPercentile_' + i];
+    var combo = SIM_DATA[DIST_KEY];
+    if (!combo) return null;
+    var matrix = combo[a.requiredPercentile];
+    if (!matrix) return null;
+    var pct = matrix[PCT.indexOf(talentPct)][PCT.indexOf(effortPct)];
+    var pctLabel = displayAnswer(state.questions[0]);
+    return { pct: pct, belief: classifyBelief(pct, pctLabel) };
+  }
+
+  // For the user's talent row, find the lowest effort percentile whose simulated
+  // success reaches the "very likely" band (>79). Returns guidance HTML.
+  function effortGuidance(i) {
+    var a = state.answers;
+    var talentPct = a['talentPercentile_' + i];
+    var effortPct = a['effortPercentile_' + i];
+    var combo = SIM_DATA[DIST_KEY];
+    if (!combo) return '';
+    var matrix = combo[a.requiredPercentile];
+    if (!matrix) return '';
+    var reqLabel = displayAnswer(state.questions[0]);
+    var row = matrix[PCT.indexOf(talentPct)];
+    var myEffortIdx = PCT.indexOf(effortPct);
+
+    var minIdx = -1;
+    for (var c = 0; c < PCT.length; c++) {
+      if (row[c] > 79) { minIdx = c; break; }
+    }
+
+    var html = '<p class="effort-note"><span class="effort-note-head">Minimum effort percentile required</span>';
+    if (minIdx === -1) {
+      var topVal = row[PCT.length - 1];
+      var onlyWord = (topVal > 0) ? 'only ' : '';
+      html += 'In the simulated scenario, of those in your indicated talent percentile (' + talentPct + '), even putting in the top 1% of effort, ' + onlyWord + topVal + '% reached a competitive level of skill (within the top ' + reqLabel + '). This suggests that to reach a competitive level you would need to put in a level of effort significantly higher than even the top 1% of people pursuing this dream.';
+    } else if (minIdx === 0) {
+      html += 'In the simulated scenario, those in your indicated talent percentile (' + talentPct + ') were already very likely to reach a competitive level of skill (within the top ' + reqLabel + ') even in the lowest effort band (' + PCT[0] + '), so effort looks unlikely to be the binding constraint here.';
+    } else {
+      var band = PCT[minIdx];
+      var bandPhrase = /^Top/i.test(band) ? band.toLowerCase() : 'top ' + band;
+      html += 'In the simulated scenario, to make it <strong>very likely</strong> that you could reach a competitive level of skill (within the top ' + reqLabel + '), those in your indicated talent percentile (' + talentPct + ') needed to be in at least the <strong>' + bandPhrase + '</strong> of effort among those pursuing this dream.';
+    }
+    html += '</p>';
+    return html;
+  }
+
+  // Stepped likelihood key — thresholds match classifyBelief exactly,
+  // so a cell's colour always agrees with the verdict wording.
+  var BANDS = [
+    { test: function(v){ return v === 100; },          color: '#6FB173', label: 'Can develop it' },
+    { test: function(v){ return v > 79 && v < 100; },  color: '#AFD49B', label: 'Very likely' },
+    { test: function(v){ return v > 58 && v <= 79; },  color: '#F2DA6B', label: 'Likely' },
+    { test: function(v){ return v > 41 && v <= 58; },  color: '#F4C07E', label: 'Roughly even' },
+    { test: function(v){ return v > 20 && v <= 41; },  color: '#EE9F45', label: 'Unlikely' },
+    { test: function(v){ return v > 0  && v <= 20; },  color: '#E5783E', label: 'Very unlikely' },
+    { test: function(v){ return v === 0; },            color: '#D75A4C', label: 'Could not, even trying your hardest' }
+  ];
+
+  function bandColor(v) {
+    for (var i = 0; i < BANDS.length; i++) {
+      if (BANDS[i].test(v)) return BANDS[i].color;
+    }
+    return '#FFFFFF';
+  }
+
+  function fmtCell(v) {
+    if (v > 0 && v < 1) return '<1';
+    return Math.round(v);
+  }
+
+  function renderSkillTable(i) {
+    var a = state.answers;
+    var reqPct = a.requiredPercentile;
+    var reqLabel = displayAnswer(state.questions[0]);
+    var combo = SIM_DATA[DIST_KEY];
+    if (!combo) return '';
+    var matrix = combo[reqPct];
+    if (!matrix) return '';
+
+    var myTalentIdx = PCT.indexOf(a['talentPercentile_' + i]);
+    var myEffortIdx = PCT.indexOf(a['effortPercentile_' + i]);
+
+    var html = '<div class="skill-table-wrap">';
+    html += '<div class="heat-scroll"><table class="heat-table"><thead>';
+    html += '<tr><th class="axis-blank" colspan="2"></th><th class="axis-top" colspan="' + PCT.length + '">Maximum effort percentile</th></tr>';
+    html += '<tr><th class="axis-blank"></th><th class="corner"></th>';
+    PCT.forEach(function(h, c) {
+      html += '<th class="' + (c === myEffortIdx ? 'colhead hl' : 'colhead') + '">' + h + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+    for (var r = 0; r < PCT.length; r++) {
+      html += '<tr>';
+      if (r === 0) { html += '<th class="axis-left" rowspan="' + PCT.length + '"><span>Talent percentile</span></th>'; }
+      html += '<th class="' + (r === myTalentIdx ? 'rowhead hl' : 'rowhead') + '">' + PCT[r] + '</th>';
+      for (var c = 0; c < PCT.length; c++) {
+        var v = matrix[r][c];
+        var isMe = (r === myTalentIdx && c === myEffortIdx);
+        html += '<td class="' + (isMe ? 'cell me' : 'cell') + '" style="background:' + bandColor(v) + ';">' + fmtCell(v) + '</td>';
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table></div>';
+    var legend = '<div class="heat-legend">';
+    BANDS.forEach(function(b) {
+      legend += '<span class="lk"><span class="sw" style="background:' + b.color + ';"></span>' + b.label + '</span>';
+    });
+    legend += '</div>';
+    html += legend;
+    html += '<p class="skill-table-note"><strong>Table description:</strong> This table displays the results of a Monte-Carlo simulation where skill is taken to be determined by a function of talent \u00d7 effort, and each individual in the simulation was assigned a random talent and effort value from a left-skewed distribution (a left-skewed distribution is the most likely distribution shape for highly competitive dreams). Each cell in the table represents the percentage of simulated people, at that combination of talent and effort, who reached the top ' + reqLabel + ' of skill.</p>';
+    html += '</div>';
+    return html;
+  }
+
+  function secondarySkillsComment() {
+    if (state.answers.otherSkills !== 'Yes') return '';
+    var covered = state.answers.otherSkillsCovered === 'Yes';
+    var mark = covered ? '&#10003;' : '&#10007;';
+    var cls = covered ? 'chk yes' : 'chk no';
+    var text = covered
+      ? 'can attain with effort or outsource'
+      : 'cannot attain or outsource';
+    var html = '<p class="skills-check"><span class="' + cls + '">' + mark + '</span> <span><strong>Other relevant skills:</strong> ' + text + '</span></p>';
+    if (state.answers.compensate !== undefined) {
+      var comp = state.answers.compensate === 'Yes';
+      var cmark = comp ? '&#10003;' : '&#10007;';
+      var ccls = comp ? 'chk yes' : 'chk no';
+      var ctext = comp
+        ? 'could compensate for a lower domain-specific skill level'
+        : 'could not compensate for a lower domain-specific skill level';
+      html += '<p class="skills-check"><span class="' + ccls + '">' + cmark + '</span> <span><strong>Compensating skills:</strong> ' + ctext + '</span></p>';
+    }
+    return html;
+  }
+
+  // ---- Justification spectrum scoring ----
+  // Skill sets the CEILING: how justified a person could possibly be. Opportunities,
+  // capacity and self-belief determine how much of that ceiling is actually realised.
+  // Attempts cannot substitute for skill that could not be developed, so a weak skill
+  // result limits the position regardless of how many attempts are available.
+  var TIERS = ['Top 10%', 'Top 2%', 'Top 0.5%'];
+
+  function skillCeiling() {
+    var a = state.answers;
+    var combo = SIM_DATA[DIST_KEY];
+    if (!combo) return null;
+    var matrix = combo[a.requiredPercentile];
+    if (!matrix) return null;
+    var ti = PCT.indexOf(a['talentPercentile_0']);
+    var ei = PCT.indexOf(a['effortPercentile_0']);
+    if (ti < 0 || ei < 0) return null;
+    var pct = matrix[ti][ei];
+
+    // Ceiling is set by the likelihood band the simulation places them in, taken at
+    // the midpoint of that band. Margins above the requirement then lift the ceiling
+    // toward the top of the same band, but never beyond it.
+    var base, bandMax;
+    if (pct === 0)        { base = 0.05;  bandMax = 0.05; }
+    else if (pct <= 20)   { base = 0.105; bandMax = 0.20; }
+    else if (pct <= 41)   { base = 0.31;  bandMax = 0.41; }
+    else if (pct <= 58)   { base = 0.50;  bandMax = 0.58; }
+    else if (pct <= 79)   { base = 0.69;  bandMax = 0.79; }
+    else if (pct < 100)   { base = 0.895; bandMax = 0.99; }
+    // 'Can develop' occupies the top of the line, from just above the top of the Very likely band
+    // (0.99) up to the scale maximum (1.10). Margins lift within this range, and
+    // compensating skills lift further within it, so the very top of the line requires
+    // certain skill, both margins, and compensation.
+    else                  { base = 1.00;  bandMax = 1.10; }
+
+    // Margin above the requirement lifts the ceiling.
+    var lessEffort = false, higherTier = false;
+    if (pct > 0) {
+      // The required level would also be reached at a lower effort percentile.
+      for (var c = 0; c < ei; c++) {
+        if (matrix[ti][c] > 79) { lessEffort = true; break; }
+      }
+      // The same talent and effort would also be competitive at a more selective tier.
+      var here = TIERS.indexOf(a.requiredPercentile);
+      if (here > -1 && here < TIERS.length - 1) {
+        var harder = combo[TIERS[here + 1]];
+        if (harder && harder[ti][ei] > 79) higherTier = true;
+      }
+      // At the most selective tier there is no higher band to test against, so this
+      // margin cannot be assessed and is not awarded.
+    }
+    // Margins move the ceiling from the middle of the band toward the top of it.
+    var marginScore = (lessEffort ? 0.4 : 0) + (higherTier ? 0.6 : 0);
+    var ceiling = Math.min(bandMax, base + marginScore * (bandMax - base));
+
+    // Compensating skills. Where there is strong evidence that other relevant skills
+    // could make up for a deficit in the domain-specific skill, the ceiling is lifted
+    // to the equivalent position within the next band up, so any margin advantage
+    // already earned is carried across rather than lost. For a 'Can develop' result
+    // there is no band above, so compensation instead lifts the ceiling further up
+    // within its own range (0.99 to 1.10). This affects only the position on the final
+    // line: it does not change the domain-specific skill result or the table above.
+    var compensated = false;
+    if (state.answers.compensate === 'Yes') {
+      var BANDS_RANGE = [[0.05, 0.05], [0.105, 0.20], [0.31, 0.41], [0.50, 0.58], [0.69, 0.79], [0.895, 0.99], [1.00, 1.10]];
+      var bi;
+      if (pct === 0) bi = 0;
+      else if (pct <= 20) bi = 1;
+      else if (pct <= 41) bi = 2;
+      else if (pct <= 58) bi = 3;
+      else if (pct <= 79) bi = 4;
+      else if (pct < 100) bi = 5;
+      else bi = 6;
+      var cur = BANDS_RANGE[bi];
+      var span = cur[1] - cur[0];
+      var frac = (span > 0) ? (ceiling - cur[0]) / span : 0;
+      frac = Math.max(0, Math.min(1, frac));
+      var lifted;
+      if (bi < BANDS_RANGE.length - 1) {
+        // Move to the same fractional position within the next band up.
+        var nb = BANDS_RANGE[bi + 1];
+        lifted = nb[0] + frac * (nb[1] - nb[0]);
+      } else {
+        // Top band: move the remaining distance toward the top of its own range.
+        lifted = ceiling + (cur[1] - ceiling) * 0.6;
+      }
+      if (lifted > ceiling) { ceiling = lifted; compensated = true; }
+    }
+
+    return { ceiling: ceiling, pct: pct, lessEffort: lessEffort, higherTier: higherTier, compensated: compensated };
+  }
+
+  function skillIsZero() {
+    var a = state.answers;
+    var combo = SIM_DATA[DIST_KEY];
+    if (!combo) return false;
+    var matrix = combo[a.requiredPercentile];
+    if (!matrix) return false;
+    var ti = PCT.indexOf(a['talentPercentile_0']);
+    var ei = PCT.indexOf(a['effortPercentile_0']);
+    if (ti < 0 || ei < 0) return false;
+    return matrix[ti][ei] === 0;
+  }
+
+  function opportunityScore() {
+    var map = { 'Very few': 0, 'Some': 1, 'Many': 2, 'Primarily self-generated': 2 };
+    var v = map[state.answers.opportunities];
+    return (v === undefined) ? null : v / 2;
+  }
+
+  function capacityScore() {
+    var keys = ['capBaseline', 'capResources', 'capYears', 'capCommitments'];
+    var got = 0, seen = 0;
+    keys.forEach(function(k) {
+      if (state.answers[k] !== undefined) { seen += 1; if (state.answers[k] === 'Yes') got += 1; }
+    });
+    return seen === 0 ? null : got / keys.length;
+  }
+
+  function justificationProfile() {
+    var sk = skillCeiling();
+    if (sk === null) return null;
+    var o = opportunityScore(), c = capacityScore();
+    if (o === null || c === null) return null;
+    var belief = (state.answers.belief === 'Yes') ? 1 : 0;
+    var matthew = (state.answers.matthew === 'Yes') ? 1 : 0;
+    // Resultant luck scales the VALUE of attempts. Low luck means each attempt is worth
+    // more (skill reliably tells, so few attempts suffice), so it amplifies the
+    // opportunities-and-capacity contribution; high luck means each attempt is worth
+    // less (many are needed for skill to shine through), so it discounts it. The scale
+    // is centred on Moderate (neutral): at that level a typical run of attempts is roughly enough to overcome the luck, so pursuit potential is worth its face value. Lower luck amplifies it; higher luck discounts it.
+    var LUCK_MULT = { 'Low': 1.3, 'Moderate': 1.0, 'High': 0.85, 'Very high': 0.65 };
+    var luck = LUCK_MULT[state.answers.resultantLuck];
+    if (luck === undefined) luck = 1.0;
+    // How fully the ceiling is realised. Minimal opportunities and capacity leave a
+    // person at 25% of their ceiling: skill alone cannot substitute for attempts,
+    // just as attempts cannot substitute for skill. Starting advantage and self-belief
+    // each contribute a smaller amount on top.
+    var attempts = Math.max(0, Math.min(1, ((o + c) / 2) * luck));
+    var realise = attempts * 0.80 + matthew * 0.10 + belief * 0.10;
+    var position = sk.ceiling * (0.25 + 0.75 * realise);
+    // The line runs from 0 to 1.10; the slice above 1.00 is reachable only by a top-band
+    // ('Can develop') result lifted by margins and compensating skills.
+    var SCALE_MAX = 1.10;
+    var scaled = position / SCALE_MAX;
+    var skillFloor = (sk.pct === 0);
+    var dims = [
+      { key: 'skill', label: 'Likely maximum attainable skill level', v: Math.min(1, sk.ceiling / SCALE_MAX) },
+      { key: 'opportunity', label: 'Opportunities available to you', v: o, word: state.answers.opportunities },
+      { key: 'capacity', label: 'Attempts you can make', v: c, word: (c === 0 ? 'Fewer than typical' : null) },
+      { key: 'matthew', label: 'Starting advantage (Matthew Effect)', v: matthew, minor: true },
+      { key: 'belief', label: 'Belief that you can achieve this dream', v: belief, minor: true }
+    ];
+    var major = dims.filter(function(d) { return !d.minor; });
+    var lowest = major.slice().sort(function(x, y) { return x.v - y.v; })[0];
+    var highest = major.slice().sort(function(x, y) { return y.v - x.v; })[0];
+    var realiseFrac = (0.25 + 0.75 * realise);
+    return { position: position, scaled: scaled, dims: dims, lowest: lowest, highest: highest, skillFloor: skillFloor, skill: sk, realiseFrac: realiseFrac };
+  }
+
+  function renderSpectrum() {
+    var p = justificationProfile();
+    if (!p) return '';
+    var pos = Math.max(0, Math.min(1, p.scaled)) * 100;
+    var posDisplay = Math.max(1.2, Math.min(98.8, pos));
+    var html = '<div class="spectrum-block">';
+    html += '<p class="spectrum-title">Epistemic Justification for the Belief: \u201cI can achieve my dream if I try hard enough\u201d</p>';
+    html += '<p class="spectrum-lead">This line represents how epistemically justified you are, relative to the maximum possible level, in believing that you can achieve your dream if you try hard enough.</p>';
+    html += '<div class="spectrum-wrap">';
+    html += '<div class="spectrum-bar"></div>';
+    html += '<div class="spectrum-marker" style="left:' + posDisplay.toFixed(1) + '%;"></div>';
+    html += '</div>';
+    html += '<div class="spectrum-ends"><span>Less justified</span><span>More justified</span></div>';
+    var note;
+    var lk = state.answers.resultantLuck;
+    var luckFav = ({ 'Low': 1.0, 'Moderate': 1.0, 'High': 0.55, 'Very high': 0.30 })[lk];
+    if (luckFav === undefined) luckFav = 1.0;
+    var luckLabel = 'the ' + (lk || 'moderate').toLowerCase() + ' resultant luck involved in each attempt';
+    var matthewOn = state.answers.matthew === 'Yes';
+    var beliefOn = state.answers.belief === 'Yes';
+    var missing = [];
+    if (!matthewOn) missing.push('you began from an advantaged position (the Matthew Effect)');
+    if (!beliefOn) missing.push('you genuinely believed that you could achieve this dream if you tried hard enough');
+    if (p.skillFloor) {
+      note = 'Because you cannot be epistemically justified in believing that you can reach a competitive skill level for your dream, you cannot be epistemically justified in believing that you can achieve the dream if you try hard enough.';
+    } else if (p.skill.ceiling < 0.5 && p.skill.ceiling <= p.lowest.v + 0.001) {
+      note = 'Your skill level relative to what this dream requires is what most limits your position. Because attempts can only convert skill into achievement, rather than substitute for it, being able to make more attempts can raise your position only so far while the skill result stands.';
+    } else if (p.scaled >= 0.9 && luckFav >= 0.9 && matthewOn && beliefOn) {
+      note = 'Each of the factors considered here is working in your favour \u2014 your skill relative to what the dream requires, the opportunities available to you, and the attempts you can make.';
+    } else {
+      var limiterV = p.lowest.v;
+      var limiterLabel = p.lowest.label;
+      if (luckFav < limiterV) { limiterV = luckFav; limiterLabel = luckLabel; }
+      if (limiterV < 0.7) {
+        note = 'The factor currently doing most to limit your position is <strong>' + limiterLabel + '</strong>.';
+        if (p.highest.v >= 0.75 && p.highest.key !== p.lowest.key) {
+          note += ' Your strongest factor is ' + p.highest.label + '.';
+        }
+      } else if (missing.length > 0) {
+        note = 'Your skill, the opportunities available to you, and the attempts you can make are all working in your favour. Your level of justification could only be higher if ' + missing.join(' and if ') + '.';
+      } else {
+        note = 'No single factor stands out as most limiting your position; where you sit on the line reflects the combination of all of them.';
+      }
+    }
+    html += '<p class="spectrum-note">' + note + '</p>';
+    html += '</div>';
+    return html;
+  }
+
+  function bandWord(v) {
+    if (v >= 0.97) return 'Very high';
+    if (v >= 0.78) return 'High';
+    if (v >= 0.55) return 'Moderate';
+    if (v >= 0.30) return 'Limited';
+    if (v > 0) return 'Low';
+    return 'None';
+  }
+
+  function renderBreakdown() {
+    var p = justificationProfile();
+    if (!p) return '';
+    var html = '<div class="breakdown-block">';
+    html += '<p class="breakdown-title">How your answers shaped this</p>';
+
+    html += '<p class="breakdown-lead">These do different jobs. Your <strong>likely maximum attainable skill level (including compensating skills)</strong> sets a ceiling \u2014 the highest position on the line available to you. Your <strong>opportunities</strong> and the <strong>attempts you can make</strong> then determine how close to that ceiling you actually land, since attempts can convert skill into achievement but cannot substitute for skill you are unlikely to develop. A <strong>starting advantage</strong> and <strong>believing you can achieve the dream</strong> each raise your position by a smaller amount: the first because beginning from an advantaged position tends to compound over time, the second because genuinely believing you can achieve something increases your likelihood of achieving it.</p>';
+
+    if (p.skill.compensated) {
+      html += '<p class="breakdown-lead">Because you indicated that other relevant skills could compensate for a lower level of domain-specific skill, your ceiling has been raised above what the domain-specific skill result alone would allow.</p>';
+    }
+    html += '<p class="factor-group-head">Sets your ceiling</p>';
+    html += renderFactorRow(p.dims[0]);
+    html += '<p class="factor-group-head">Determines how close to that ceiling you land</p>';
+    html += renderFactorRow(p.dims[1]);
+    html += renderFactorRow(p.dims[2]);
+    html += renderLuckRow();
+    html += renderFactorRow(p.dims[3]);
+    html += renderFactorRow(p.dims[4]);
+
+    var closeness;
+    if (p.realiseFrac >= 0.92) closeness = 'Your answers about opportunities and attempts place you close to the highest position your likely maximum attainable skill level allows.';
+    else if (p.realiseFrac >= 0.7) closeness = 'Your answers about opportunities and attempts place you a little below the highest position your likely maximum attainable skill level allows.';
+    else if (p.realiseFrac >= 0.45) closeness = 'Your answers about opportunities and attempts place you well below the highest position your likely maximum attainable skill level allows.';
+    else closeness = 'Your answers about opportunities and attempts place you far below the highest position your likely maximum attainable skill level allows.';
+
+    html += '<p class="breakdown-foot">' + closeness;
+    if (p.skill.ceiling < 0.98) {
+      html += ' Because you are not certain to reach a competitive level of skill, the very top of the line is not available to you even with ideal opportunities and attempts.';
+    }
+    html += '</p>';
+    html += '</div>';
+    return html;
+  }
+
+  function renderLuckRow() {
+    var lk = state.answers.resultantLuck || 'Moderate';
+    var fav = ({ 'Low': 1.0, 'Moderate': 0.75, 'High': 0.45, 'Very high': 0.20 })[lk];
+    if (fav === undefined) fav = 0.75;
+    var effect;
+    if (lk === 'Low') effect = 'With low resultant luck, fewer attempts are needed before outcomes reflect skill, making epistemic justification easier to attain.';
+    else if (lk === 'Moderate') effect = 'With moderate resultant luck, a large enough number of attempts should be able to mitigate its effects, so that outcomes come to reflect skill.';
+    else if (lk === 'High') effect = 'With high resultant luck, a large number of attempts are needed before luck is likely to be mitigated and results reflect skill; this limits the level of epistemic justification possible.';
+    else effect = 'When outcomes involve a very high level of resultant luck, it is unclear whether the number of attempts possible in a human lifetime can sufficiently compensate. This limits the level of epistemic justification possible.';
+    var pctW = Math.max(2, Math.round(fav * 100));
+    var html = '<div class="factor">';
+    html += '<div class="factor-head"><span class="factor-name">Resultant luck in each attempt</span><span class="factor-word">' + lk + '</span></div>';
+    html += '<div class="factor-track"><div class="factor-fill" style="width:' + pctW + '%;"></div></div>';
+    html += '<p class="factor-effect">' + effect + '</p>';
+    html += '</div>';
+    return html;
+  }
+
+  function renderFactorRow(d) {
+    if (d.minor) {
+      var on = !!d.v;
+      return '<div class="factor factor-minor"><div class="factor-head">' +
+        '<span class="factor-name">' + d.label + '</span>' +
+        '<span class="chk ' + (on ? 'yes' : 'no') + '">' + (on ? '&#10003;' : '&#10007;') + '</span>' +
+        '</div></div>';
+    }
+    var pctW = Math.max(2, Math.round(d.v * 100));
+    var word = d.word ? d.word : bandWord(d.v);
+    var html = '<div class="factor">';
+    html += '<div class="factor-head"><span class="factor-name">' + d.label + '</span><span class="factor-word">' + word + '</span></div>';
+    html += '<div class="factor-track"><div class="factor-fill" style="width:' + pctW + '%;"></div></div>';
+    html += '</div>';
+    return html;
+  }
+
+  function compensationNote() {
+    var sk = skillCeiling();
+    if (!sk || !sk.compensated) return '';
+    var html = '<div class="compensate-block">';
+    html += '<p class="compensate-title">Compensating skills</p>';
+    html += '<p class="compensate-text">The result above concerns your <strong>domain-specific skill</strong> only \u2014 it is what the simulation models, and it is unchanged by your other answers. You have indicated strong evidence that strengths in one or more of your other relevant skills could compensate for a lower level of domain-specific skill. Where a dream can be achieved by more than one route, this genuinely matters, so it raises the highest position available to you on the justification line at the end of this assessment.</p>';
+    html += '<p class="compensate-text">This adjustment rests on your own judgement rather than on the simulation, which models the domain-specific skill alone. It is worth being confident that this dream really does have an alternative pathway, and that there is no floor of domain-specific competence below which no amount of other strength would be enough.</p>';
+    html += '</div>';
+    return html;
+  }
+
+  function hardStopPanel(title, text) {
+    var html = '<div class="panel">';
+    html += '<p class="summary-title">' + title + '</p>';
+    html += '<div class="result"><p class="verdict">' + text + '</p></div>';
+    html += '<div class="actions">';
+    html += '<button class="back" onclick="goBack()">&larr; Back</button>';
+    html += '<button class="btn" onclick="restart()">Restart</button>';
+    html += '</div></div>';
+    return html;
+  }
+
+  // Skill results. When `interstitial` is true this is shown mid-flow, ending with
+  // the "There's More..." prompt and a Continue button rather than the final actions.
+  function renderSkillResults(interstitial) {
+    var html = '<div class="panel">';
+    html += '<p class="summary-title">Skill level competitiveness</p>';
+    html += '<p class="lead-stat">You have indicated that <strong>' + displayAnswer(state.questions[0]) + '</strong> of people pursuing this dream achieve it, without relying on unreplicable circumstantial luck.</p>';
+
+    var result = getResultForSkill(0);
+    if (result) {
+      html += '<div class="result">';
+      html += '<p class="lead">Based on the information you provided&hellip;</p>';
+      html += '<p class="verdict">' + result.belief + '.</p>';
+      html += secondarySkillsComment();
+      if (result.pct <= 79) { html += effortGuidance(0); }
+      html += '</div>';
+
+      html += '<div class="help-panel results-panel">';
+      html += '<p class="skill-table-caption">Chance of reaching the top ' + displayAnswer(state.questions[0]) + ' of domain specific skill, by talent and effort</p>';
+      html += renderSkillTable(0);
+      html += '</div>';
+    }
+
+    if (interstitial) {
+      var mq = state.questions[state.step];
+      html += '<div class="more-block">';
+      html += '<p class="more-heading">There\u2019s More\u2026</p>';
+      html += '<p class="more-text">Having a competitive skill level does not guarantee success; you still need to apply your skill by making attempts toward dream achievement, and luck plays a role in outcomes each time you make an attempt.</p>';
+      html += '<p class="more-question">' + mq.question + '</p>';
+      html += '<div class="options">';
+      for (var oi = 0; oi < mq.options.length; oi++) {
+        html += '<button class="opt" onclick="select(' + oi + ')">' + mq.options[oi] + '</button>';
+      }
+      html += '</div>';
+      html += '<div class="actions" style="margin-top:18px;"><button class="back" onclick="goBack()">&larr; Back</button></div>';
+      html += '</div>';
+      html += '</div>';
+      return html;
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function renderSummary() {
+    if (state.answers.qualifying === 'No') {
+      return hardStopPanel('Minimum qualifying requirements', 'If you cannot, even with effort, meet the minimum qualifying requirements for achieving this dream, then you cannot be epistemically justified in believing that you can achieve it.');
+    }
+    if (state.answers.otherSkillsCovered === 'No') {
+      return hardStopPanel('Other required skills', 'If this dream requires other important skills that you can neither develop nor outsource, then you cannot be epistemically justified in believing you can achieve it, however strong your domain-specific skill.');
+    }
+    if (state.answers.attemptTime === 'No') {
+      return hardStopPanel('Making attempts', 'If you cannot make any attempts toward achieving this dream, you cannot be epistemically justified in believing you have any chance of achieving it.');
+    }
+    var html = '<div class="panel">';
+    html += renderSpectrum();
+    html += renderBreakdown();
+    html += '</div>';
+    html += renderSkillResults(false);
+    html += '<div class="panel">';
+    html += '<div class="actions">';
+    html += '<button class="back" onclick="goBack()">&larr; Back</button>';
+    html += '<button class="btn" onclick="restart()">Restart</button>';
+    html += '<button class="btn primary" onclick="copySummary()">Copy this scenario</button>';
+    html += '<button class="btn" onclick="window.print()">Print this scenario</button>';
+    html += '</div>';
+    html += '<p class="copied" id="copied"></p>';
+    html += '</div>';
+    return html;
+  }
+
+
+  function positionWord(scaled) {
+    var v = scaled;
+    if (v >= 0.90) return 'very close to the maximum';
+    if (v >= 0.72) return 'toward the more-justified end';
+    if (v >= 0.50) return 'past the midpoint, on the more-justified side';
+    if (v >= 0.30) return 'below the midpoint, on the less-justified side';
+    if (v >= 0.12) return 'toward the less-justified end';
+    return 'near the less-justified end';
+  }
+
+  function copySummary() {
+    var lines = [];
+
+    if (state.answers.qualifying === 'No') {
+      lines.push('If you cannot, even with effort, meet the minimum qualifying requirements for achieving this dream, then you cannot be epistemically justified in believing that you can achieve it.');
+      finishCopy(lines.join('\n'));
+      return;
+    }
+
+    if (state.answers.otherSkillsCovered === 'No') {
+      lines.push('If this dream requires other important skills that you can neither develop nor outsource, then you cannot be epistemically justified in believing you can achieve it, however strong your domain-specific skill.');
+      finishCopy(lines.join('\n'));
+      return;
+    }
+
+    var reqQ = state.questions[0];
+    lines.push('You have indicated that ' + displayAnswer(reqQ) + ' of people pursuing this dream achieve it, without relying on unreplicable circumstantial luck.');
+    lines.push('');
+
+    var result = getResultForSkill(0);
+    if (result) {
+      lines.push('Domain-specific skill');
+      lines.push(result.belief.replace(/<[^>]+>/g, '') + '.');
+      lines.push('  (Simulation match rate: ' + result.pct + '%)');
+      var eg = effortGuidance(0).replace('</span>', ': ').replace(/<[^>]+>/g, '');
+      if (eg) lines.push('  ' + eg);
+      if (state.answers.otherSkills === 'Yes') {
+        var covered = state.answers.otherSkillsCovered === 'Yes';
+        lines.push('  Other relevant skills: ' + (covered ? 'can attain with effort or outsource' : 'cannot attain or outsource'));
+      }
+    }
+
+    if (state.answers.attemptTime === 'No') {
+      lines.push('');
+      lines.push('If you cannot make any attempts toward achieving this dream, you cannot be epistemically justified in believing you have any chance of achieving it.');
+      finishCopy(lines.join('\n'));
+      return;
+    }
+
+    var p = justificationProfile();
+    if (p) {
+      lines.push('');
+      lines.push('Epistemic justification for the belief "I can achieve my dream if I try hard enough"');
+      lines.push('Your position on the line sits ' + positionWord(p.scaled) + '.');
+      if (p.skillFloor) {
+        lines.push('Because you cannot be epistemically justified in believing you can reach a competitive skill level, you cannot be epistemically justified in believing you can achieve the dream if you try hard enough.');
+      } else {
+        lines.push('Contributing factors:');
+        lines.push('  Maximum attainable skill level (sets the ceiling): ' + bandWord(p.dims[0].v));
+        lines.push('  Opportunities available: ' + bandWord(p.dims[1].v));
+        lines.push('  Attempts you can make: ' + (p.dims[2].word || bandWord(p.dims[2].v)));
+        lines.push('  Starting advantage (Matthew Effect): ' + (state.answers.matthew === 'Yes' ? 'Yes' : 'No'));
+        lines.push('  Belief you can achieve the dream: ' + (state.answers.belief === 'Yes' ? 'Yes' : 'No'));
+        if (p.skill.compensated) {
+          lines.push('  Compensating skills raised the ceiling above the domain-specific result.');
+        }
+      }
+    }
+
+    lines.push('');
+    lines.push('Answers given:');
+    state.questions.filter(function(q) {
+      return SHOWN_ANSWER_KEYS.indexOf(q.key) > -1;
+    }).forEach(function(q) {
+      lines.push('  ' + q.label + ': ' + displayAnswer(q));
+    });
+
+    finishCopy(lines.join('\n'));
+  }
+
+  function finishCopy(text) {
+    var note = document.getElementById('copied');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        note.textContent = 'Copied to clipboard.';
+      }, function() {
+        note.textContent = text;
+      });
+    } else {
+      note.textContent = text;
+    }
+  }
+
+  state.questions = buildFlow();
+  render();
+</script>
+</body>
+</html>
