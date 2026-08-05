@@ -1032,7 +1032,7 @@
   function renderProgress() {
     var el = document.getElementById('progress');
     var label = document.getElementById('stepLabel');
-    var total = state.questions.length;
+    var total = maxFlowLength();
     var html = '';
     for (var i = 0; i < total; i++) {
       var cls = 'seg';
@@ -1041,11 +1041,26 @@
       html += '<div class="' + cls + '"><div class="fill"></div></div>';
     }
     el.innerHTML = html;
-    if (state.step < total) {
+    if (state.step < state.questions.length) {
       label.textContent = 'Question ' + (state.step + 1) + ' of ' + total;
     } else {
       label.textContent = 'Your results';
     }
+  }
+
+  // The longest possible path through the flow, so the progress total is stable
+  // from the start rather than shrinking when branches are skipped.
+  function maxFlowLength() {
+    var saved = state.answers;
+    state.answers = {
+      requiredPercentile: 'Top 10%', qualifying: 'Yes',
+      talentPercentile_0: 'Top 1%', effortPercentile_0: 'Top 1%',
+      otherSkills: 'Yes', otherSkillsCovered: 'Yes', compensate: 'No',
+      attemptTime: 'Yes'
+    };
+    var len = buildFlow().length;
+    state.answers = saved;
+    return len;
   }
 
   function render() {
